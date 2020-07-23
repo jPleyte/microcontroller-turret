@@ -13,6 +13,8 @@ This project docments my efforts to create a toy sentry. I have a Nerf Rival mou
 * (H) Power Door Lock Actuator (amazon)
 * (I) 12V power supply
 * (J) SparkFun OpenPIR motion sensor (https://www.sparkfun.com/products/13968)
+* (K) 4xAA battery case
+* (L) Pushbutton
 
 ## Basic Setup
 
@@ -47,42 +49,48 @@ To provide power to the arduino when using the MB102, add a jumper wire from the
 ![Image of Figure 2: Wire the MB102 and Nano to power on the breadboard](images/figure.boardDuinoPower.2.png)
 
 ### Panning the Turret
-To control the turret’s panning the arduino is connected to a SF3218MG (C) servo. For now i am just going to add a potentiometer to the breadboard for controlling the panning. Later this will be replaced by a camera which can follow objects and move the turret as needed.
+To control the turret’s panning the microcontroller is connected to a SF3218MG (C) servo. For now i am just going to add a potentiometer to the breadboard for controlling the panning. Later this will be replaced by a camera which can follow objects and move the turret as needed.
 
-The datasheet for the SF3218MG says it can operate with just 4.7V but i’ve found it needs at least 6V so I am using a 4xAA battery case to provide its power. This power needs to be separated from the arduino’s power so i am going to use the one remaining section of the main breadboard (D).
+The datasheet for the SF3218MG says it can operate with just 4.7V but i’ve found it needs at least 6V so I am using a 4xAA battery case (J) to provide its power. This power needs to be separated from the arduino’s power so i am going to use the one remaining section of the main breadboard (D).
 
 Place the potentiometer (E) on the board and connect it to the breadboard’s (D) power rail and connect the POT’s center pin to A0.
 
+The POT's power needs to be connected to the power bus that is connected to the arduino's power. If you connect the POT to the power bus which powers the servo you will get unexpected result; possibly a short.
+
+![Image of Figure 3: Place the potentiometer on the breadboard](images/figure.turretPanPot.0.png)
+
+
 Connect the 6V power supply (F) to the power rail.
 
-COnnect the servo (C) power to the breadboard and the input line to the arduino’s (A) digital line ~3.
+Connect the servo's (C) power to the breadboard and the input line to the arduino’s (A) digital line ~3.
 
 Also run a common ground from the right side of the board to the left side.  White wire.
 
-**FIgure 3: Connect the panning servo**
+**FIgure 4: Connect the panning servo**
 
 Add the following code to the sketch which pans the turret using the POT (E).
 
 
 ### The Firing Motors
-The nerft gun has two motors and when a ball gets put between them it is fired. There are two triggers on the gun; one starts up the motors and the other pushes the ball into the motors. I have removed the trigger which starts the motors and added a relay (G) that is enabled by the microcontroller. Power for the motors continues to be supplied by the 6 C batteries which are loaded in to the gun.
 
-Place a relay (G) in between the batteries and the motors. Connect the signal line of the relay to digital pin 4 on the microcontroller. Connect vcc and ground pins of the relay to the breadboard.
+The nerft gun has two motors and when a ball gets put between them it is fired. There are two triggers on the gun; one starts up the motors and the other pushes the ball into the motors. I have removed the trigger which starts the motors and added a relay (G) that is enabled by the microcontroller. Power for the motors continues to be supplied by the 6 C batteries which are part of the gun.
 
-**Figure 4: Single relay to control motors**
+Place a relay (G) in between the batteries and the motors. Connect the signal line of the relay to pin D4 on the microcontroller. Connect vcc and ground pins of the relay to the breadboard.
+
+**Figure 5: Single relay to control motors**
 
 
 The following code can be added to the sketch to test the motors. The actual code which enables the motors will be added once the motion sensor (PIR) is attached.
 
 
-###  Chambering and Firing
+### Chambering and Firing
 Firing this toy gun is accomplished by feeding soft yellow balls in to the rotating wheels controlled by the motors which were set up in the previous step. Normally this is accomplished by pulling a trigger whih slightly rotates a plastic latch which does two things:
 A plastic divider comes down, separating the ball to be fired from the rest of the balls in the clip. This way only one ball is fired at a time.
 The ball which is to be fired is pushed forwarward into the rotating wheels.
 
 I have removed the trigger and to the latech which the trigger controlled I attached a power door lock actuator (H). This linear actuator requires 12V which are delivered via a 1500mAh 120C 11.V LiPo battery (I)
 
-**Figure 5: Power door lock actuator**
+**Figure 6: Power door lock actuator**
 
 
 The linear actuator receives power from a blue wire and a green.  When the blue wire receives 12V+ and the green wire is connected to ground the actuator extends. When the wires are reversed the actuator retracts.
@@ -103,10 +111,10 @@ The wiring is a little complicated and instead of explaining it will just show w
 
 Example: https://microlinearactuator.com/control-micro-linear-actuator-using-relays-microcontrollers/#prettyPhoto/0/
 
-**Figure 6: Wiring of the external power supply side for the dual channel relay module**
+**Figure 7: Wiring of the external power supply side for the dual channel relay module**
+![Image ofFigure 6: Wiring of the external power supply side for the dual channel relay module](images/figure.relayBesideWiredRelay.png)
 
-
-**Figure 7: Wiring of the microcontroller side for the dual channel relay module**
+**Figure 8: Wiring of the microcontroller side for the dual channel relay module**
 
 
 Dual channel relay wiring:
@@ -141,7 +149,19 @@ Dual channel relay wiring:
 
 To connect the relay and the battery to the toy gun I used an XT60-to-barrel connector to a thingee and then wired the thinggee to the power door lock actuator (H).
 
+#### Manual Fire
 
+Add a pushbutton to the breadboard so you can manually fire the gun. This is particularly useful for testing.
+
+Place the pushbutton the breadboard.
+Connect one side of the button to power with a jumper wire.
+Connect the other side of the button to ground with a 10Kohm resistor.
+Run a jumper wire from the ground side of the button to arduino pin D10.
+
+Add the initialisation code for ``MANUAL_FIRE_BUTTON_IN``, and the ``isManualFireButtonPressed()`` function to the sketch.
+
+**Figure 9: Wiring of the external manual fire button**
+![Image for Figure 9: Wiring of the external manual fire button](images/figure.manualFireButton.0.png)
 
 
 
@@ -174,3 +194,48 @@ const int PIR_ANALOG_PIN_IN A3;   // PIR analog output on A3
 const int PIR_DIGITAL_PIN_IN 12;  // PIR digital output on D12
 
 Add the motionDetected() function.
+
+
+## Addendum
+
+### Arduino Pin Chart
+
+| Pin | Mode | Function                                                     |
+| --- | ---- | ------------------------------------------------------------ |
+| D3  | Out  | Control turret pan servo                                     |
+| D4  | Out  | Control the relay which provides power to the firing motors. |
+| D10 | In   | Manually fire the gun                                        |
+|     |      |                                                              |
+
+### Firing Tests
+
+
+* Test 0: Load 10 balls and manually fire 10 times.
+  - ACTUATOR_RESPONSE_DELAY = 250;
+  - FIRING_MOTOR_WARMUP_DELAY=1000;
+  - Success rate: 10/10
+
+
+### Troubleshooting
+
+**The firing motors aren't turrning on**
+Make sure the sliding access door used for clearing jamed balls is closed. You need to push the door shut until it clicks.
+
+If you have a light on the single relay which controls the motors then make sure that light is on and the realy is receiving power.
+
+Check the 6C batteries.
+
+### Next Steps
+
+- [ ] Add an ammo counter so the gun doesn't fire when it is empty
+- [ ] Mount the motion sensor
+- [ ] Adjust PIR sensitivity
+- [ ] Reduce the amount of time for the FIRING_MOTOR_WARMUP_DELAY
+- [ ] Reduce the amount of time for the ACTUATOR_RESPONSE_DELAY
+- [ ] Fill in the rest of the " Arduino Pin Chart"
+- [ ] Disconnect the microcontroller's usb and use the power supply.
+- [ ] Use an OpenMV camera to find the target
+      - should the PIR still be used in order to save power?
+- [ ] Document construction of the turret frame
+- [ ] Move everything off the breadboard and wire up a permanent solution
+- [ ] Complete documentation and images
