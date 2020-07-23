@@ -163,18 +163,8 @@ Add the initialisation code for ``MANUAL_FIRE_BUTTON_IN``, and the ``isManualFir
 **Figure 9: Wiring of the external manual fire button**
 ![Image for Figure 9: Wiring of the external manual fire button](images/figure.manualFireButton.0.png)
 
-
-
-
-
-
-
-
-
-
-
 Connect the relay to the toy gun
-
+[image needed]
 
 
 ### Motion Sensor
@@ -190,22 +180,28 @@ To test the PIR load the testing sketch sparkFunOpenPIR_Test0 and open your Seri
 The sample code uses 115200 baud for communication so be sure to set that in the Serial Monitor.
 
 Add the following constant definitions to your code:
+```
 const int PIR_ANALOG_PIN_IN A3;   // PIR analog output on A3
 const int PIR_DIGITAL_PIN_IN 12;  // PIR digital output on D12
+```
 
-Add the motionDetected() function.
+Add the ``motionDetected()`` function.
 
 
 ## Addendum
 
 ### Arduino Pin Chart
 
-| Pin | Mode | Function                                                     |
-| --- | ---- | ------------------------------------------------------------ |
-| D3  | Out  | Control turret pan servo                                     |
-| D4  | Out  | Control the relay which provides power to the firing motors. |
-| D10 | In   | Manually fire the gun                                        |
-|     |      |                                                              |
+| Pin | Mode | Function                                                               |
+| --- | ---- | ---------------------------------------------------------------------- |
+| A0  | In   | Potentiometer which pans the turret                                    |
+| A3  | In   | PIR analog input                                                       |
+| D3  | Out  | Control turret pan servo                                               |
+| D4  | Out  | Control the relay which provides power to the firing motors.           |
+| D6  | Out  | Enable the first relay which provides power to linear actuator         |
+| D7  | Out  | Enable the second relay which reverses polirity to the linear actuator |
+| D10 | In   | Manually fire the gun                                                  |
+| D12 | In   | PIR digital input                                                      |
 
 ### Firing Tests
 

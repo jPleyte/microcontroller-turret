@@ -245,7 +245,7 @@ boolean isManualFireButtonPressed() {
 }
 
 /**
- * This code isn't used, but it is useful for testing. It pans the servo back and forth between min and max position. 
+ * This function pans the servo back and forth between min and max position. 
  */
 void swivelTestTurrenPanServo() {
   // Start at current position (centered) and pan to TURRET_PAN_SERVO_MAX
