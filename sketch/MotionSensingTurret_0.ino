@@ -1,7 +1,12 @@
 #include <Servo.h>
+#include <avr/sleep.h>
 
-// manual=true, auto=false
-boolean manualOperationMode = false;
+// Use demoMode to test panning and firing
+const boolean IS_DEMO_MODE = false;
+
+// Number of rounds in the magazine
+const int NUMBER_OF_ROUNDS_IN_mAGAZINE = 10;
+int numberOfShotsFired = 0;
 
 // Manual fire button
 const int MANUAL_FIRE_BUTTON_IN = 10;
@@ -19,8 +24,13 @@ const int TURRET_PAN_SERVO_POT_TOLLERANCE = 2;
 
 int turretPotVal;
 int turretPotAngle;
-const int TURRET_PAN_SERVO_MIN = 1;
-const int TURRET_PAN_SERVO_MAX = 179;
+
+// jDebug: limiting the range because the PIR wires are too short to support 180 degrees
+//const int TURRET_PAN_SERVO_MIN = 1;
+//const int TURRET_PAN_SERVO_MAX = 179;
+const int TURRET_PAN_SERVO_MIN = 85;
+const int TURRET_PAN_SERVO_MAX = 95;
+
 int turretPanServoCurrentAngle;
 int turretPanServoPreviousAngle;
 
@@ -65,10 +75,10 @@ void setup() {
   pinMode(PIR_DIGITAL_PIN_IN, INPUT);
 
   Serial.print("Operation mode: ");
-  if(manualOperationMode) {
-    Serial.println("manual");
+  if(IS_DEMO_MODE) {
+    Serial.println("Demo");
   } else {
-    Serial.println("auto");
+    Serial.println("Auto");
   }
   
   Serial.println("Setup complete.");
@@ -78,11 +88,12 @@ void setup() {
  * Main loop
  */
 void loop() {
-  if(manualOperationMode) {
-    swivelTestTurrenPanServo();
-  } else {
-    monitorTurretPanServoPot();
-  }
+  if(IS_DEMO_MODE) {
+    performDemo();
+    return;
+  } 
+    
+  monitorTurretPanServoPot();
   
   if(isManualFireButtonPressed()) {
     fire();
@@ -230,6 +241,12 @@ void fire() {
 
   // Turn off firing motors
   firingMotorRelayOff();
+
+  numberOfShotsFired = numberOfShotsFired + 1;
+
+  if(numberOfShotsFired >= NUMBER_OF_ROUNDS_IN_mAGAZINE) {
+    goIntoSleepMode();
+  }
 }
 
 /**
@@ -245,15 +262,26 @@ boolean isManualFireButtonPressed() {
 }
 
 /**
- * This function pans the servo back and forth between min and max position. 
+ * This function pans the servo back and forth between min and max positions, firing at predefined intervals. 
  */
-void swivelTestTurrenPanServo() {
+void performDemo() {
+   int PREDEFINED_ANGLES[5] = {TURRET_PAN_SERVO_MIN,
+                               TURRET_PAN_SERVO_MIN+45,
+                               TURRENT_PAN_SERVO_CENTER, 
+                               TURRET_PAN_SERVO_MAX-45, 
+                               TURRET_PAN_SERVO_MAX};
   // Start at current position (centered) and pan to TURRET_PAN_SERVO_MAX
   for(turretPanServoCurrentAngle = turretPanServoCurrentAngle; turretPanServoCurrentAngle <= TURRET_PAN_SERVO_MAX; turretPanServoCurrentAngle += 1) {
       Serial.print("Panning turrent pan servo to angle ");
-      Serial.println(turretPanServoCurrentAngle);
+      Serial.println(turretPanServoCurrentAngle);      
       turretPanServo.write(turretPanServoCurrentAngle);
       delay(50);
+
+      // Fire at predefined angles
+      if(isCurrentPositionAtPredefinedAngle(turretPanServoCurrentAngle, PREDEFINED_ANGLES, 5)) {
+        fire();
+      }
+
   }
 
   // Start at TURRET_PAN_SERVO_MAX and pan to TURRET_PAN_SERVO_MIN
@@ -261,6 +289,30 @@ void swivelTestTurrenPanServo() {
     turretPanServo.write(turretPanServoCurrentAngle);
     Serial.print("Panning turrent pan servo to angle ");
     Serial.println(turretPanServoCurrentAngle);
+
+    // Fire at predefined angles
+    if(isCurrentPositionAtPredefinedAngle(turretPanServoCurrentAngle, PREDEFINED_ANGLES, 5)) {
+      fire();
+    }
+
     delay(50);
   }
+}
+
+/**
+ * Return true if currentAngle matches one of the preDefinedAngles
+ */
+boolean isCurrentPositionAtPredefinedAngle(int currentAngle, int preDefinedAngles[], int numberOfPreDefinedAngles) {
+  
+  for(int i=0; i<numberOfPreDefinedAngles; ++i) {
+    if(currentAngle == preDefinedAngles[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void goIntoSleepMode() {
+  Serial.println("entering sleep mode (but not really)");
+  delay(1000*60*60*8);
 }

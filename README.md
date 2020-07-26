@@ -30,6 +30,7 @@ I haven't documented the physical consturction of the turret; it's functional bu
 ## System Assembly
 
 ### Primary Components
+
 Place the arduino (A) and MB102 power supply (B) on the breadboard at opposite ends. This allows the device to be controlled by external power or, through the UNO’s USB for debugging.
 
 **Figure 1: Microcontroller and external power module**
@@ -212,18 +213,21 @@ Add the ``motionDetected()`` function.
   - Success rate: 10/10
 
 
-### Troubleshooting
+## Troubleshooting
 
 **The firing motors aren't turrning on**
+
 Make sure the sliding access door used for clearing jamed balls is closed. You need to push the door shut until it clicks.
 
 If you have a light on the single relay which controls the motors then make sure that light is on and the realy is receiving power.
 
-Check the 6C batteries.
+Check the 6 C batteries.
 
-### Next Steps
+## Next Steps
 
+- [ ] Create demo mode
 - [ ] Add an ammo counter so the gun doesn't fire when it is empty
+  - [ ] and make it go to sleep to conserve power
 - [ ] Mount the motion sensor
 - [ ] Adjust PIR sensitivity
 - [ ] Reduce the amount of time for the FIRING_MOTOR_WARMUP_DELAY
