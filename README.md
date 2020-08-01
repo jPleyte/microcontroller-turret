@@ -225,17 +225,17 @@ Check the 6 C batteries.
 
 ## Next Steps
 
-- [ ] Create demo mode
-- [ ] Add an ammo counter so the gun doesn't fire when it is empty
+- [x] Add an ammo counter so the gun doesn't fire when it is empty
   - [ ] and make it go to sleep to conserve power
-- [ ] Mount the motion sensor
 - [ ] Adjust PIR sensitivity
 - [ ] Reduce the amount of time for the FIRING_MOTOR_WARMUP_DELAY
 - [ ] Reduce the amount of time for the ACTUATOR_RESPONSE_DELAY
-- [ ] Fill in the rest of the " Arduino Pin Chart"
-- [ ] Disconnect the microcontroller's usb and use the power supply.
 - [ ] Use an OpenMV camera to find the target
       - should the PIR still be used in order to save power?
 - [ ] Document construction of the turret frame
 - [ ] Move everything off the breadboard and wire up a permanent solution
 - [ ] Complete documentation and images
+- [x] Create demo mode
+- [x] Fill in the rest of the " Arduino Pin Chart"
+- [x] Disconnect the microcontroller's usb and use the power supply.
+- [x] Mount the motion sensor

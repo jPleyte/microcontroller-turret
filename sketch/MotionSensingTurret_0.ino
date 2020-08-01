@@ -26,14 +26,11 @@ int turretPotVal;
 int turretPotAngle;
 
 // jDebug: limiting the range because the PIR wires are too short to support 180 degrees
-//const int TURRET_PAN_SERVO_MIN = 1;
-//const int TURRET_PAN_SERVO_MAX = 179;
-const int TURRET_PAN_SERVO_MIN = 85;
-const int TURRET_PAN_SERVO_MAX = 95;
+const int TURRET_PAN_SERVO_MIN = 1;
+const int TURRET_PAN_SERVO_MAX = 179;
 
 int turretPanServoCurrentAngle;
 int turretPanServoPreviousAngle;
-
 
 /* Firing motor variables */
 const int FIRING_MOTOR_RELAY_PIN = 4;
