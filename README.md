@@ -197,12 +197,15 @@ Add the ``motionDetected()`` function.
 | --- | ---- | ---------------------------------------------------------------------- |
 | A0  | In   | Potentiometer which pans the turret                                    |
 | A3  | In   | PIR analog input                                                       |
+| D2  | Out  | LED indicator of "Fire" mode                                           |
 | D3  | Out  | Control turret pan servo                                               |
 | D4  | Out  | Control the relay which provides power to the firing motors.           |
+| D5  | Out  | LED indicator of "setup" mode                                          |
 | D6  | Out  | Enable the first relay which provides power to linear actuator         |
 | D7  | Out  | Enable the second relay which reverses polirity to the linear actuator |
 | D10 | In   | Manually fire the gun                                                  |
 | D12 | In   | PIR digital input                                                      |
+|     |      |                                                                        |
 
 ### Firing Tests
 
@@ -223,6 +226,10 @@ If you have a light on the single relay which controls the motors then make sure
 
 Check the 6 C batteries.
 
+**Firing motors start, but does not fire**
+
+This seems to happen when the battery which powers the microcontroller is low. Use an LED to indicate setup() mode. If the motors start up and then the microcontroller resets then it's because battery is low and can't control the system (ie LED on pin 5 turns on while motors are warming up)
+
 ## Next Steps
 
 - [x] Add an ammo counter so the gun doesn't fire when it is empty
@@ -232,9 +239,13 @@ Check the 6 C batteries.
 - [ ] Reduce the amount of time for the ACTUATOR_RESPONSE_DELAY
 - [ ] Use an OpenMV camera to find the target
       - should the PIR still be used in order to save power?
+- [ ] Consolidate power sources
+      - Current construction uses power from four sources
+- [ ] Detect low battery on primary (or any) battery source and indicate probelm
 - [ ] Document construction of the turret frame
 - [ ] Move everything off the breadboard and wire up a permanent solution
 - [ ] Complete documentation and images
+- [ ] Use and LED to indicate setup() mode until the PIR has warmed up (hardware dependent mod)
 - [x] Create demo mode
 - [x] Fill in the rest of the " Arduino Pin Chart"
 - [x] Disconnect the microcontroller's usb and use the power supply.

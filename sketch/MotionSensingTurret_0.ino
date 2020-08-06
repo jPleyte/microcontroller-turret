@@ -1,8 +1,13 @@
 #include <Servo.h>
 #include <avr/sleep.h>
 
+const int STATUS_LED_SETUP_MODE = 5;
+const int STATUS_LED_FIRE_MODE_OUT = 2;
+
+
 // Use demoMode to test panning and firing
 const boolean IS_DEMO_MODE = false;
+const boolean IS_MANUAL_CONTROL = false;
 
 // Number of rounds in the magazine
 const int NUMBER_OF_ROUNDS_IN_mAGAZINE = 10;
@@ -52,6 +57,11 @@ const int PIR_DIGITAL_PIN_IN = 12;  // PIR digital output on D12
 void setup() {
   Serial.begin(9600);
 
+  pinMode(STATUS_LED_SETUP_MODE, OUTPUT);
+  digitalWrite(STATUS_LED_SETUP_MODE, HIGH);
+  delay(2000);
+
+
   // Initialise and center the turret pan servo
   initialiseTurrentPanServo();
 
@@ -77,8 +87,12 @@ void setup() {
   } else {
     Serial.println("Auto");
   }
+
+  pinMode(STATUS_LED_FIRE_MODE_OUT, OUTPUT);
+  digitalWrite(STATUS_LED_FIRE_MODE_OUT, LOW);
   
   Serial.println("Setup complete.");
+  digitalWrite(STATUS_LED_SETUP_MODE, LOW);
 }
 
 /**
@@ -89,10 +103,13 @@ void loop() {
     performDemo();
     return;
   } 
-    
-  monitorTurretPanServoPot();
+
+  if(IS_MANUAL_CONTROL) {
+    monitorTurretPanServoPot();
+  }
   
-  if(isManualFireButtonPressed()) {
+  
+  if(IS_MANUAL_CONTROL && isManualFireButtonPressed()) {
     fire();
   } else if(motionDetected()) {
     fire();
@@ -224,6 +241,8 @@ boolean motionDetected() {
 void fire() {
   Serial.println("Fire!");  
 
+  digitalWrite(STATUS_LED_FIRE_MODE_OUT, HIGH);
+
   // Turn on firing motors and delay for a moment to let them get up to speed
   firingMotorRelayOn();
   delay(FIRING_MOTOR_WARMUP_DELAY);
@@ -244,6 +263,9 @@ void fire() {
   if(numberOfShotsFired >= NUMBER_OF_ROUNDS_IN_mAGAZINE) {
     goIntoSleepMode();
   }
+
+  delay(2000);
+  digitalWrite(STATUS_LED_FIRE_MODE_OUT, LOW);
 }
 
 /**
