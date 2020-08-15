@@ -30,7 +30,6 @@ const int TURRET_PAN_SERVO_POT_TOLLERANCE = 2;
 int turretPotVal;
 int turretPotAngle;
 
-// jDebug: limiting the range because the PIR wires are too short to support 180 degrees
 const int TURRET_PAN_SERVO_MIN = 1;
 const int TURRET_PAN_SERVO_MAX = 179;
 
@@ -246,9 +245,6 @@ void fire() {
   // Turn on firing motors and delay for a moment to let them get up to speed
   firingMotorRelayOn();
   delay(FIRING_MOTOR_WARMUP_DELAY);
-
-
-  // TODO keep track of ammunition
   
   firingRelayOneOn();
   firingRelaysOff();
